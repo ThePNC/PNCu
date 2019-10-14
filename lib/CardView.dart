@@ -14,52 +14,52 @@ class CardView extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => navigate('grid'),
       child: Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => navigate('grid'),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => navigate('grid'),
+          ),
+          title: Text('Cartão'),
         ),
-        title: Text('Cartão'),
-      ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.fromLTRB(50, 50, 50, 25),
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Image.asset(
-                'assets/${images[card['store']]}.png',
+        body: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(50, 50, 50, 25),
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Image.asset(
+                  'assets/${images[card['store']]}.png',
+                ),
               ),
             ),
-          ),
-          Text(
-            card['name'],
-            style: TextStyle(
-              fontSize: 20,
+            Text(
+              card['name'],
+              style: TextStyle(
+                fontSize: 20,
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 50),
-            child: BarCodeImage(
-              data: card['barcode'],
-              codeType: BarCodeType.CodeEAN13,
-              lineWidth: 2.5,
-              barHeight: 90.0,
-              hasText: true,
-              onError: (error) {
-                print('error = $error');
-              },
+            Container(
+              padding: EdgeInsets.only(top: 50),
+              child: BarCodeImage(
+                data: card['barcode'],
+                codeType: BarCodeType.CodeEAN13,
+                lineWidth: 2.5,
+                barHeight: 90.0,
+                hasText: true,
+                onError: (error) {
+                  print('error = $error');
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => navigate('edit'),
+          tooltip: 'Edit',
+          child: Icon(Icons.edit),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => navigate('edit'),
-        tooltip: 'Edit',
-        child: Icon(Icons.edit),
-      ),
-    ),
     );
   }
 }

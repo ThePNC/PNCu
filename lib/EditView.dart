@@ -32,116 +32,127 @@ class _EditViewState extends State<EditView> {
     super.dispose();
   }
 
-  Future<bool> navigateBack() => widget.navigate(widget.index < 0 ? 'grid' : 'card');
+  Future<bool> _navigateBack() =>
+      widget.navigate(widget.index < 0 ? 'grid' : 'card');
+
+  Future _submit() async {
+    if (_nameController.text != '') {
+      widget.update({
+        'store': _store,
+        'name': _nameController.text,
+        'barcode': _nameController.text,
+      }, widget.index);
+      widget.navigate('grid');
+    } else {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text('Por favor, preencha todos os campos.'),
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: navigateBack,
+      onWillPop: _navigateBack,
       child: Scaffold(
-      appBar: AppBar(
-        title: Text(widget.index < 0 ? 'Novo Cartão' : 'Cartão'),
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: navigateBack,
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () {},
+        appBar: AppBar(
+          title: Text(widget.index < 0 ? 'Novo Cartão' : 'Cartão'),
+          leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: _navigateBack,
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.fromLTRB(50, 50, 50, 25),
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Image.asset(
-                  'assets/${images[_store]}.png',
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 50),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Loja:'),
-                  DropdownButton(
-                    value: _store,
-                    items: stores.map((String value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (v) {
-                      setState(() {
-                        this._store = v;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(50, 0, 50, 25),
-              child: TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: "Nome",
-                  labelStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(50, 0, 50, 25),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.card['barcode'] == ''
-                        ? 'Código de Barras'
-                        : widget.card['barcode'],
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.camera_alt),
-                    tooltip: 'Scanear Código',
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            ),
-            RaisedButton.icon(
-              label: Text('Guardar'),
+          actions: [
+            IconButton(
               icon: Icon(Icons.save),
-              color: Colors.blue,
-              textColor: Colors.white,
-              onPressed: () {
-                return showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      // Retrieve the text the that user has entered by using the
-                      // TextEditingController.
-                      content: Text(_nameController.text + images[_store]),
-                    );
-                  },
-                );
-              },
+              onPressed: _submit,
             ),
           ],
         ),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.fromLTRB(50, 50, 50, 25),
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Image.asset(
+                    'assets/${images[_store]}.png',
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 50),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Loja:'),
+                    DropdownButton(
+                      value: _store,
+                      items: stores.map((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (v) {
+                        setState(() {
+                          this._store = v;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(50, 0, 50, 25),
+                child: TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: "Nome",
+                    labelStyle: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(50, 0, 50, 25),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.card['barcode'] == ''
+                          ? 'Código de Barras'
+                          : widget.card['barcode'],
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.camera_alt),
+                      tooltip: 'Scanear Código',
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+              ),
+              RaisedButton.icon(
+                label: Text('Guardar'),
+                icon: Icon(Icons.save),
+                color: Colors.blue,
+                textColor: Colors.white,
+                onPressed: _submit,
+              ),
+            ],
+          ),
+        ),
       ),
-    ),
     );
   }
 }

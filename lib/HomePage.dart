@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './CardsGrid.dart';
 import './CardView.dart';
 import './EditView.dart';
+
+// Cards are stored in shared preferences https://flutter.dev/docs/cookbook/persistence/key-value
+// Following the structure: key 'barcode': value string list [<store>, <name>]
+// This data gets mapped, onLoad, to an Object with the proper keys matching the values
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,44 +16,54 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _emptyCard = const {
-    'barcode': '',
-    'type': '',
-    'name': '',
     'store': 'Outra',
+    'name': '',
+    'barcode': '',
   };
 
-  List<Map<String, Object>> _cards = [
-    {
-      'barcode': '2803342249544',
-      'type': 'abc',
-      'name': 'minipreco',
-      'store': 'Minipreço',
-    },
-    {
-      'barcode': '2',
-      'type': 'bcd',
-      'name': 'pingodoce',
-      'store': 'Pingo Doce',
-    },
-    {
-      'barcode': '3',
-      'type': 'cdf',
-      'name': 'continente',
-      'store': 'Continente',
-    },
-    {
-      'barcode': '4',
-      'type': 'cdf',
-      'name': 'loja do thor',
-      'store': 'Outra',
-    },
-    {
-      'barcode': '5',
-      'type': 'cdf',
-      'name': 'loja do doc',
-      'store': 'Outra',
-    },
-  ];
+  List<Map<String, Object>> _cards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCards();
+  }
+
+  _loadCards() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<Map<String, Object>> cs = [];
+
+    prefs.clear(); //REMOVE IN PRODUCTION
+    prefs.setStringList('2803342249544', [
+      'Minipreço',
+      'minipreco',
+    ]);
+    prefs.setStringList('1850341840143', [
+      'Continente',
+      'continente',
+    ]);
+
+    void loadCard(key) {
+      var c = prefs.getStringList(key);
+      cs.add({
+        'store': c[0],
+        'name': c[1],
+        'barcode': key,
+      });
+    }
+
+    prefs.getKeys().forEach((k) => loadCard(k));
+
+    setState(() {
+      _cards = cs;
+    });
+  }
+
+  _saveCard(card) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setStringList(card['barcode'], [card['store'], card['name']]);
+  }
 
   var _page = 'grid';
   Map<String, Object> _card;
@@ -69,8 +84,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _updateCards(card, index) {
+    _saveCard(card);
+
+    var newCards = [...this._cards];
+    if (index > -1) {
+      newCards[index] = card;
+    } else {
+      newCards.add(card);
+    }
     setState(() {
-      this._cards[index] = card;
+      this._cards = newCards;
     });
   }
 

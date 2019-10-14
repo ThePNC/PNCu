@@ -1,16 +1,19 @@
 # pncu
 
-A new Flutter application.
+## Features
 
-## Getting Started
+- List cards
 
-This project is a starting point for a Flutter application.
+- Open card view with Store image, Name and render of Barcode
 
-A few resources to get you started if this is your first Flutter project:
+- Create card, with store, name and scan Barcode with phone camera
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- Edit and Delete cards
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Card management
+
+Cards are stored in shared preferences https://flutter.dev/docs/cookbook/persistence/key-value
+
+Following the structure: key 'barcode': value string list [<store>, <name>]
+
+This data gets mapped, onLoad, to an Object with the proper keys matching the values
