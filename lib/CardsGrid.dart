@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './utils.dart';
+
 class CardsGrid extends StatelessWidget {
   final List<Map<String, Object>> cards;
   final Function open;
@@ -19,12 +21,12 @@ class CardsGrid extends StatelessWidget {
           return Container(
             padding: EdgeInsets.all(16.0),
             child: FlatButton(
-              onPressed: () => open(card),
+              onPressed: () => open(card, cards.indexOf(card)),
               padding: EdgeInsets.all(0.0),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('assets/${card['image']}.png'),
+                    Image.asset('assets/${images[card['store']]}.png'),
                     Text(card['name'])
                   ]),
             ),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import './CardsGrid.dart';
 import './CardView.dart';
 import './EditView.dart';
-import './CreateView.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,56 +10,67 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, Object>> _testCards = [
+  final _emptyCard = const {
+    'barcode': -1,
+    'type': '',
+    'name': '',
+    'store': 'Outra',
+  };
+
+  List<Map<String, Object>> _cards = [
     {
       'barcode': 1,
       'type': 'abc',
       'name': 'minipreco',
-      'image': 'mp',
+      'store': 'Minipreço',
     },
     {
       'barcode': 2,
       'type': 'bcd',
       'name': 'pingodoce',
-      'image': 'pd',
+      'store': 'Pingo Doce',
     },
     {
       'barcode': 3,
       'type': 'cdf',
       'name': 'continente',
-      'image': 'cont',
+      'store': 'Continente',
     },
     {
       'barcode': 4,
       'type': 'cdf',
       'name': 'loja do thor',
-      'image': 'blank',
+      'store': 'Outra',
     },
     {
       'barcode': 5,
       'type': 'cdf',
       'name': 'loja do doc',
-      'image': 'blank',
+      'store': 'Outra',
     },
   ];
 
   var _page = 'grid';
   Map<String, Object> _card;
-
-  void _add() {
-    _navigate('create');
-  }
-
-  void _open(card) {
-    setState(() {
-      this._page = 'card';
-      this._card = card;
-    });
-  }
+  int _cardIndex;
 
   void _navigate(page) {
     setState(() {
       this._page = page;
+    });
+  }
+
+  void _open(card, index) {
+    setState(() {
+      this._page = 'card';
+      this._card = card;
+      this._cardIndex = index;
+    });
+  }
+
+  void _updateCards(card, index) {
+    setState(() {
+      this._cards[index] = card;
     });
   }
 
@@ -72,20 +82,22 @@ class _HomePageState extends State<HomePage> {
         }
         break;
 
-      case 'edit': {
-        return EditView(_card, _navigate);
-      }
-      break;
+      case 'edit':
+        {
+          return EditView(_card, _cardIndex, _updateCards, _navigate);
+        }
+        break;
 
-      case 'create': {
-        return CreateView(_navigate);
-      }
-      break;
+      case 'create':
+        {
+          return EditView(_emptyCard, -1, _updateCards, _navigate);
+        }
+        break;
 
       default:
-      // case 'grid'
+        // case 'grid'
         {
-          return CardsGrid(_testCards, _open, _add);
+          return CardsGrid(_cards, _open, () => _navigate('create'));
         }
         break;
     }

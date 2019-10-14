@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './utils.dart';
+
 class CardView extends StatelessWidget {
   final Map<String, Object> card;
   final Function navigate;
@@ -20,7 +22,7 @@ class CardView extends StatelessWidget {
         children: [
           Container(
             padding: EdgeInsets.all(50),
-            child: Image.asset('assets/${card['image']}.png',),
+            child: Image.asset('assets/${images[card['store']]}.png',),
           ),
           Text(card['name']),
         ],
