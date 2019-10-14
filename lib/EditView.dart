@@ -32,15 +32,25 @@ class _EditViewState extends State<EditView> {
     super.dispose();
   }
 
+  Future<bool> navigateBack() => widget.navigate(widget.index < 0 ? 'grid' : 'card');
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: navigateBack,
+      child: Scaffold(
       appBar: AppBar(
+        title: Text(widget.index < 0 ? 'Novo Cartão' : 'Cartão'),
         leading: IconButton(
           icon: Icon(Icons.close),
-          onPressed: () => widget.navigate(widget.index < 0 ? 'grid' : 'card'),
+          onPressed: navigateBack,
         ),
-        title: Text(widget.index < 0 ? 'Novo Cartão' : 'Cartão'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -56,19 +66,28 @@ class _EditViewState extends State<EditView> {
                 ),
               ),
             ),
-            DropdownButton(
-              value: _store,
-              items: stores.map((String value) {
-                return DropdownMenuItem(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (v) {
-                setState(() {
-                  this._store = v;
-                });
-              },
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 50),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Loja:'),
+                  DropdownButton(
+                    value: _store,
+                    items: stores.map((String value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (v) {
+                      setState(() {
+                        this._store = v;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
             Container(
               padding: EdgeInsets.fromLTRB(50, 0, 50, 25),
@@ -79,9 +98,26 @@ class _EditViewState extends State<EditView> {
                   labelStyle: TextStyle(
                     color: Colors.grey,
                   ),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(),
                 ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(50, 0, 50, 25),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.card['barcode'] == ''
+                        ? 'Código de Barras'
+                        : widget.card['barcode'],
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.camera_alt),
+                    tooltip: 'Scanear Código',
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ),
             RaisedButton.icon(
@@ -105,6 +141,7 @@ class _EditViewState extends State<EditView> {
           ],
         ),
       ),
+    ),
     );
   }
 }

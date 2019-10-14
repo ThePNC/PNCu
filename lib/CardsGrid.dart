@@ -27,7 +27,12 @@ class CardsGrid extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset('assets/${images[card['store']]}.png'),
-                    Text(card['name'])
+                    Text(
+                      card['name'],
+                      style: TextStyle(
+                        fontSize: 15,
+                      ),
+                    )
                   ]),
             ),
           );

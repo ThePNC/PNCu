@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _emptyCard = const {
-    'barcode': -1,
+    'barcode': '',
     'type': '',
     'name': '',
     'store': 'Outra',
@@ -19,31 +19,31 @@ class _HomePageState extends State<HomePage> {
 
   List<Map<String, Object>> _cards = [
     {
-      'barcode': 1,
+      'barcode': '2803342249544',
       'type': 'abc',
       'name': 'minipreco',
       'store': 'Minipreço',
     },
     {
-      'barcode': 2,
+      'barcode': '2',
       'type': 'bcd',
       'name': 'pingodoce',
       'store': 'Pingo Doce',
     },
     {
-      'barcode': 3,
+      'barcode': '3',
       'type': 'cdf',
       'name': 'continente',
       'store': 'Continente',
     },
     {
-      'barcode': 4,
+      'barcode': '4',
       'type': 'cdf',
       'name': 'loja do thor',
       'store': 'Outra',
     },
     {
-      'barcode': 5,
+      'barcode': '5',
       'type': 'cdf',
       'name': 'loja do doc',
       'store': 'Outra',
