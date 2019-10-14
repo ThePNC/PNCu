@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 
 import './utils.dart';
 
@@ -6,9 +7,10 @@ class EditView extends StatefulWidget {
   final Map<String, Object> card;
   final int index;
   final Function update;
+  final Function delete;
   final Function navigate;
 
-  EditView(this.card, this.index, this.update, this.navigate);
+  EditView(this.card, this.index, this.update, this.delete, this.navigate);
 
   @override
   _EditViewState createState() => _EditViewState();
@@ -35,7 +37,7 @@ class _EditViewState extends State<EditView> {
   Future<bool> _navigateBack() =>
       widget.navigate(widget.index < 0 ? 'grid' : 'card');
 
-  Future _submit() async {
+  Future _submitSave() async {
     if (_nameController.text != '') {
       widget.update({
         'store': _store,
@@ -55,6 +57,28 @@ class _EditViewState extends State<EditView> {
     }
   }
 
+  Future _submitDelete() async {
+    return showDialog(
+      context: context,
+      // barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Apagar Cartão?'),
+          content: const Text('Esta acção não é irreversível.'),
+          actions: [
+            FlatButton(
+              child: const Text('Confirmar'),
+              onPressed: () {
+                widget.delete(widget.index);
+                widget.navigate('grid');
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -69,7 +93,7 @@ class _EditViewState extends State<EditView> {
           actions: [
             IconButton(
               icon: Icon(Icons.save),
-              onPressed: _submit,
+              onPressed: _submitSave,
             ),
           ],
         ),
@@ -142,15 +166,22 @@ class _EditViewState extends State<EditView> {
                   ],
                 ),
               ),
-              RaisedButton.icon(
-                label: Text('Guardar'),
-                icon: Icon(Icons.save),
-                color: Colors.blue,
-                textColor: Colors.white,
-                onPressed: _submit,
-              ),
+              widget.index > -1
+                  ? RaisedButton.icon(
+                      label: Text('Eliminar'),
+                      icon: Icon(Icons.delete_forever),
+                      color: Colors.red,
+                      textColor: Colors.white,
+                      onPressed: _submitDelete,
+                    )
+                  : Container(),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'Guardar',
+          child: Icon(Icons.save),
+          onPressed: _submitSave,
         ),
       ),
     );

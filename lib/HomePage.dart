@@ -65,6 +65,13 @@ class _HomePageState extends State<HomePage> {
     prefs.setStringList(card['barcode'], [card['store'], card['name']]);
   }
 
+  _removeCard(barcode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove(barcode);
+  }
+
+
   var _page = 'grid';
   Map<String, Object> _card;
   int _cardIndex;
@@ -97,6 +104,18 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _deleteCard(index) {
+    var barcode = this._cards[index]['barcode'];
+
+    _removeCard(barcode);
+
+    var newCards = [...this._cards];
+    newCards.removeWhere((c) => c['barcode'] == barcode);
+    setState(() {
+      this._cards = newCards;
+    });
+  }
+
   Widget _content() {
     switch (_page) {
       case 'card':
@@ -107,13 +126,13 @@ class _HomePageState extends State<HomePage> {
 
       case 'edit':
         {
-          return EditView(_card, _cardIndex, _updateCards, _navigate);
+          return EditView(_card, _cardIndex, _updateCards, _deleteCard, _navigate);
         }
         break;
 
       case 'create':
         {
-          return EditView(_emptyCard, -1, _updateCards, _navigate);
+          return EditView(_emptyCard, -1, _updateCards, _deleteCard, _navigate);
         }
         break;
 
