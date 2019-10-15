@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<Map<String, Object>> cs = [];
 
-    prefs.clear(); //REMOVE IN PRODUCTION
+    /*prefs.clear(); //REMOVE IN PRODUCTION
     prefs.setStringList('2803342249544', [
       'Minipreço',
       'minipreco',
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     prefs.setStringList('1850341840143', [
       'Continente',
       'continente',
-    ]);
+    ]);*/
 
     void loadCard(key) {
       var c = prefs.getStringList(key);
