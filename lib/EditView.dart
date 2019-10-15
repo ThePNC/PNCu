@@ -19,12 +19,14 @@ class EditView extends StatefulWidget {
 class _EditViewState extends State<EditView> {
   var _store = stores[0];
   TextEditingController _nameController;
+  var _barcode = '';
 
   @override
   void initState() {
     super.initState();
     this._store = widget.card['store'];
     _nameController = TextEditingController(text: widget.card['name']);
+    this._barcode = widget.card['barcode'];
   }
 
   @override
@@ -35,14 +37,14 @@ class _EditViewState extends State<EditView> {
   }
 
   Future<bool> _navigateBack() =>
-      widget.navigate(widget.index < 0 ? 'grid' : 'card');
+      widget.navigate(widget.index > -1 ? 'card' : 'grid');
 
   Future _submitSave() async {
     if (_nameController.text != '') {
       widget.update({
         'store': _store,
         'name': _nameController.text,
-        'barcode': _nameController.text,
+        'barcode': _barcode,
       }, widget.index);
       widget.navigate('grid');
     } else {
@@ -69,6 +71,9 @@ class _EditViewState extends State<EditView> {
             FlatButton(
               child: const Text('Confirmar'),
               onPressed: () {
+
+              // SOMEHOW CLOSE THE DIALOG ON CONFIRMATION
+
                 widget.delete(widget.index);
                 widget.navigate('grid');
               },
@@ -79,23 +84,46 @@ class _EditViewState extends State<EditView> {
     );
   }
 
+  Future _scan() async {
+    try {
+      String result = await BarcodeScanner.scan();
+      setState(() {
+        _barcode = result;
+      });
+    } on PlatformException catch (ex) {
+      if (ex.code == BarcodeScanner.CameraAccessDenied) {
+        setState(() {
+          _barcode = "Sem acesso a Câmara.";
+        });
+      } else {
+        setState(() {
+          _barcode = "Unknown Error $ex";
+        });
+      }
+    } catch (ex) {
+      setState(() {
+        _barcode = "Unknown Error $ex";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _navigateBack,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.index < 0 ? 'Novo Cartão' : 'Cartão'),
+          title: Text(widget.index > -1 ? 'Cartão' : 'Novo Cartão'),
           leading: IconButton(
             icon: Icon(Icons.close),
             onPressed: _navigateBack,
           ),
-          actions: [
+          actions: widget.index > -1 ? [
             IconButton(
-              icon: Icon(Icons.save),
-              onPressed: _submitSave,
+              icon: Icon(Icons.delete_forever),
+              onPressed: _submitDelete,
             ),
-          ],
+          ] : [],
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -152,36 +180,29 @@ class _EditViewState extends State<EditView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.card['barcode'] == ''
+                      _barcode == ''
                           ? 'Código de Barras'
-                          : widget.card['barcode'],
+                          : _barcode,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: Icon(Icons.camera_alt),
-                      tooltip: 'Scanear Código',
-                      onPressed: () {},
+                      tooltip: 'Scan',
+                      onPressed: _scan,
                     ),
                   ],
                 ),
               ),
-              widget.index > -1
-                  ? RaisedButton.icon(
-                      label: Text('Eliminar'),
-                      icon: Icon(Icons.delete_forever),
-                      color: Colors.red,
-                      textColor: Colors.white,
-                      onPressed: _submitDelete,
-                    )
-                  : Container(),
+              RaisedButton.icon(
+                label: Text('Guardar'),
+                icon: Icon(Icons.save),
+                color: Colors.blue,
+                textColor: Colors.white,
+                onPressed: _submitSave,
+              )
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          tooltip: 'Guardar',
-          child: Icon(Icons.save),
-          onPressed: _submitSave,
         ),
       ),
     );
