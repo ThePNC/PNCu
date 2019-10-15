@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 
 import './utils.dart';
@@ -71,9 +72,7 @@ class _EditViewState extends State<EditView> {
             FlatButton(
               child: const Text('Confirmar'),
               onPressed: () {
-
-              // SOMEHOW CLOSE THE DIALOG ON CONFIRMATION
-
+                Navigator.pop(context);
                 widget.delete(widget.index);
                 widget.navigate('grid');
               },
@@ -118,12 +117,14 @@ class _EditViewState extends State<EditView> {
             icon: Icon(Icons.close),
             onPressed: _navigateBack,
           ),
-          actions: widget.index > -1 ? [
-            IconButton(
-              icon: Icon(Icons.delete_forever),
-              onPressed: _submitDelete,
-            ),
-          ] : [],
+          actions: widget.index > -1
+              ? [
+                  IconButton(
+                    icon: Icon(Icons.delete_forever),
+                    onPressed: _submitDelete,
+                  ),
+                ]
+              : [],
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -180,9 +181,7 @@ class _EditViewState extends State<EditView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      _barcode == ''
-                          ? 'Código de Barras'
-                          : _barcode,
+                      _barcode == '' ? 'Código de Barras' : _barcode,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),

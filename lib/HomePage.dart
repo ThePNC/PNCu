@@ -71,7 +71,6 @@ class _HomePageState extends State<HomePage> {
     prefs.remove(barcode);
   }
 
-
   var _page = 'grid';
   Map<String, Object> _card;
   int _cardIndex;
@@ -126,7 +125,8 @@ class _HomePageState extends State<HomePage> {
 
       case 'edit':
         {
-          return EditView(_card, _cardIndex, _updateCards, _deleteCard, _navigate);
+          return EditView(
+              _card, _cardIndex, _updateCards, _deleteCard, _navigate);
         }
         break;
 
